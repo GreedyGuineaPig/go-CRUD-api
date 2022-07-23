@@ -1,5 +1,7 @@
 package main
 
+// TODO: go fmt main.go before merge to master!
+
 import (
 	"encoding/json"
 	"fmt"
@@ -29,6 +31,17 @@ func getMovies(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(movies)
 }
 
+func deleteMovie(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "application/json")
+	params := mux.Vars(r)
+	for index, item := range movies {
+		if item.ID == params["id"] {
+			movies = append(movies[:index], movies[index+1:]...) // not efficient but because we don't have DB
+			break
+		}
+	}
+}
+
 var movies []Movie
 
 func main() {
@@ -41,6 +54,7 @@ func main() {
 
 	r.HandleFunc("/", rootHandler)
 	r.HandleFunc("/movies", getMovies).Methods("GET")
+	r.HandleFunc("/movies/[id]", deleteMovie).Methods("DELETE")
 
 	fmt.Printf("Starting server at port 8080\n")
 	log.Fatal(http.ListenAndServe(":8080", r))
