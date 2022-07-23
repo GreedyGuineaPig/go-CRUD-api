@@ -10,7 +10,6 @@ import (
 
 type Movie struct {
 	ID       string    `json:"id"`
-	Isbn     string    `json:"isbn"`
 	Title    string    `json:"title"`
 	Director *Director `json:"director"`
 }
@@ -24,8 +23,15 @@ func rootHandler(w http.ResponseWriter, r *http.Request) {
 	fmt.Fprintf(w, "this is a root directory")
 }
 
+var movies []Movie
+
 func main() {
 	r := mux.NewRouter()
+
+	// add some sample movies
+	movies = append(movies, Movie{ID: "1", Title: "Titanic", Director: &Director{Firstname: "James", Lastname: "Cameron"}})
+	movies = append(movies, Movie{ID: "2", Title: "E.T.", Director: &Director{Firstname: "Steven", Lastname: "Spielberg"}})
+	movies = append(movies, Movie{ID: "3", Title: "Jurassic Park", Director: &Director{Firstname: "Steven", Lastname: "Spielberg"}})
 
 	r.HandleFunc("/", rootHandler)
 
