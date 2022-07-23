@@ -1,6 +1,7 @@
 package main
 
 import (
+	"encoding/json"
 	"fmt"
 	"log"
 	"net/http"
@@ -23,6 +24,11 @@ func rootHandler(w http.ResponseWriter, r *http.Request) {
 	fmt.Fprintf(w, "this is a root directory")
 }
 
+func getMovies(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(movies)
+}
+
 var movies []Movie
 
 func main() {
@@ -34,6 +40,7 @@ func main() {
 	movies = append(movies, Movie{ID: "3", Title: "Jurassic Park", Director: &Director{Firstname: "Steven", Lastname: "Spielberg"}})
 
 	r.HandleFunc("/", rootHandler)
+	r.HandleFunc("/movies", getMovies).Methods("GET")
 
 	fmt.Printf("Starting server at port 8080\n")
 	log.Fatal(http.ListenAndServe(":8080", r))
