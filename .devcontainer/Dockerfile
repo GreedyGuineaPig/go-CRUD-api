@@ -21,3 +21,7 @@ RUN if [ "${NODE_VERSION}" != "none" ]; then su vscode -c "umask 0002 && . /usr/
 
 # get gorilla mux
 RUN go get "github.com/gorilla/mux" 
+# get jsondiff
+RUN go get "github.com/nsf/jsondiff"
+# get testify
+RUN go get "github.com/stretchr/testify/assert" 
