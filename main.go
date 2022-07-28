@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"sort"
 	"strconv"
 
 	"github.com/gorilla/mux"
@@ -69,6 +70,24 @@ func createMovieHandler(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(movies)
 }
 
+func updateMovieHandler(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "application/json")
+	params := mux.Vars(r)
+	id, _ := strconv.Atoi(params["id"])
+
+	var movie Movie
+	json.NewDecoder(r.Body).Decode(&movie)
+
+	for index, item := range movies {
+		if item.ID == id {
+			movies = append(movies[:index], movies[index+1:]...)
+			movies = append(movies, movie)
+			sort.Slice(movies, func(i, j int) bool { return movies[i].ID < movies[j].ID })
+		}
+	}
+	json.NewEncoder(w).Encode(movies)
+}
+
 func initializeMovies() {
 	movies = nil
 	// add some sample movies
@@ -87,6 +106,7 @@ func main() {
 	r.HandleFunc("/movies/{id}", deleteMovieHandler).Methods("DELETE")
 	r.HandleFunc("/movies/{id}", getMovieHandler).Methods("GET")
 	r.HandleFunc("/movies", createMovieHandler).Methods("POST")
+	r.HandleFunc("/movies/{id}", updateMovieHandler).Methods("PUT")
 
 	fmt.Printf("Starting server at port 8080\n")
 	log.Fatal(http.ListenAndServe(":8080", r))
