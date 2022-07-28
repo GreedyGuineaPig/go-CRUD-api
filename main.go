@@ -47,6 +47,19 @@ func deleteMovieHandler(w http.ResponseWriter, r *http.Request) {
 	json.NewEncoder(w).Encode(movies)
 }
 
+func getMovieHandler(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "application/json")
+	params := mux.Vars(r)
+	id, _ := strconv.Atoi(params["id"])
+
+	for _, item := range movies {
+		if item.ID == id {
+			json.NewEncoder(w).Encode(item)
+			return
+		}
+	}
+}
+
 func initializeMovies() {
 	movies = nil
 	// add some sample movies
@@ -63,6 +76,7 @@ func main() {
 	r.HandleFunc("/", rootHandler)
 	r.HandleFunc("/movies", getAllMoviesHandler).Methods("GET")
 	r.HandleFunc("/movies/{id}", deleteMovieHandler).Methods("DELETE")
+	r.HandleFunc("/movies/{id}", getMovieHandler).Methods("GET")
 
 	fmt.Printf("Starting server at port 8080\n")
 	log.Fatal(http.ListenAndServe(":8080", r))
