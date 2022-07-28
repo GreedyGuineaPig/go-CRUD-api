@@ -51,10 +51,8 @@ func getMovieHandler(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	params := mux.Vars(r)
 	id, _ := strconv.Atoi(params["id"])
-	fmt.Println(id)
 
 	for _, item := range movies {
-		fmt.Println(item.Title)
 		if item.ID == id {
 			json.NewEncoder(w).Encode(item)
 			return
