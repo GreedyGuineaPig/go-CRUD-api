@@ -51,13 +51,24 @@ func getMovieHandler(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	params := mux.Vars(r)
 	id, _ := strconv.Atoi(params["id"])
+	fmt.Println(id)
 
 	for _, item := range movies {
+		fmt.Println(item.Title)
 		if item.ID == id {
 			json.NewEncoder(w).Encode(item)
 			return
 		}
 	}
+}
+
+func createMovieHandler(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "application/json")
+	var movie Movie
+	json.NewDecoder(r.Body).Decode(&movie)
+	movie.ID = len(movies) + 1
+	movies = append(movies, movie)
+	json.NewEncoder(w).Encode(movies)
 }
 
 func initializeMovies() {
@@ -77,6 +88,7 @@ func main() {
 	r.HandleFunc("/movies", getAllMoviesHandler).Methods("GET")
 	r.HandleFunc("/movies/{id}", deleteMovieHandler).Methods("DELETE")
 	r.HandleFunc("/movies/{id}", getMovieHandler).Methods("GET")
+	r.HandleFunc("/movies", createMovieHandler).Methods("POST")
 
 	fmt.Printf("Starting server at port 8080\n")
 	log.Fatal(http.ListenAndServe(":8080", r))
