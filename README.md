@@ -11,4 +11,4 @@ This is a backend API server with Golang. It has no RDBMS.
 - localhost:8080/movies POST-> create a new record of the movie
 
 ## Technologies
-Golang, httptest, GorillaMux, json
+Golang, httptest, GorillaMux, json, remote-container(VScode)
